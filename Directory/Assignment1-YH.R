@@ -113,6 +113,21 @@ lat_summary <- dfBOLD2%>%
     min_latitude = min(lat,  na.rm = TRUE)     # Calculate min latitude
   )
 
+##Edit 3: Adding a Statistical Test and Enhancing Data Summary
+shapiro_test_result <- shapiro.test(dfBOLD2$lat)
+print(shapiro_test_result)
+
+countries_to_analyze <- c("Canada", "United States", "India")
+lat_summary <- dfBOLD2 %>%
+  filter(country %in% countries_to_analyze) %>%
+  group_by(country) %>%
+  summarise(
+    mean_latitude = mean(lat, na.rm = TRUE),
+    max_latitude = max(lat, na.rm = TRUE),
+    min_latitude = min(lat, na.rm = TRUE)
+  )
+print(lat_summary)
+
 #All tests showed that the "lat" data does not follow the normal distribution so data need to be transformed
 
 #Data Manipulation:  please note that more data manipulation (i.e.,  filtering data,  grouping,  summarizing) will be find included in the code of each graph
