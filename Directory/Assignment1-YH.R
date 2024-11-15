@@ -16,7 +16,6 @@ theme_set(theme_light())
 
 library(ggthemes)
 
-
 #to create Venn diagram
 #install.packages("VennDiagram") ++ New packages ++ 
 library(VennDiagram)
@@ -35,7 +34,6 @@ library(styler)
 
 #open and read the data file
 dfBOLD <- read_tsv("../data/Chaetognatha_BOLD_data.tsv")
-
 
 ##-3- Code part 1 - Data Exploration and manipulation ------
 
@@ -72,7 +70,16 @@ length(unique(dfBOLD2$country))
 #lat = 136
 length(unique(dfBOLD2$lat))
 
-#Visual normality for "lat" #1
+## Edit 1:Redundancy Reduction and Code Efficiency ------
+#The original code manually calculates unique counts for each column using length(unique(...)), which is simple but not scalable. The edited code uses a count_unique function with sapply to calculate unique counts for multiple columns at once, improving efficiency, scalability, and code modularity.
+#Calculate the unique count
+count_unique <- function(df, columns) {
+  sapply(columns, function(col) length(unique(df[[col]])))
+}
+unique_counts <- count_unique(dfBOLD2, c("bin_uri", "species_name", "country", "lat"))
+print(unique_counts)
+
+#Visual normality for "lat" 
 qqnorm(dfBOLD2$lat)
 qqline(dfBOLD2$lat)
 
@@ -95,6 +102,22 @@ lat_summary <- dfBOLD2%>%
     max_latitude = max(lat,  na.rm = TRUE),     # Calculate max latitude
     min_latitude = min(lat,  na.rm = TRUE)     # Calculate min latitude
   )
+
+##Edit 2: Adding a Statistical Test and Enhancing Data Summary------
+# The original code called the Shapiro-Wilk test twice, causing redundancy. The revised code stores the result in a variable and defines countries_to_analyze as a separate vector, improving efficiency and reusability.
+shapiro_test_result <- shapiro.test(dfBOLD2$lat)
+print(shapiro_test_result)
+
+countries_to_analyze <- c("Canada", "United States", "India")
+lat_summary <- dfBOLD2 %>%
+  filter(country %in% countries_to_analyze) %>%
+  group_by(country) %>%
+  summarise(
+    mean_latitude = mean(lat, na.rm = TRUE),
+    max_latitude = max(lat, na.rm = TRUE),
+    min_latitude = min(lat, na.rm = TRUE)
+  )
+print(lat_summary)
 
 #All tests showed that the "lat" data does not follow the normal distribution so data need to be transformed
 
@@ -225,6 +248,46 @@ df_summary2 <- dfBOLD2%>%
   # Linear regression for species
   species_lm <- lm(Number_of_species ~ lat,  data = df_summary2)
   species_summary <- summary(species_lm)
+
+  ##Edit 3: Corrected Linear Regression for Species Analysis------
+  # The original code caused an error by attempting linear regression within a pipe sequence. The revised code separates the summarization and regression steps, stores the data in df_summary2, and adds a ggplot2 scatter plot with a regression line.
+
+# Summarize the data by grouping by latitude and calculating unique species and BINs
+df_summary2 <- dfBOLD2 %>%
+  
+  # Remove rows with missing latitude, species name, or BIN URI
+  filter(!is.na(lat)) %>%
+  filter(!is.na(species_name)) %>%
+  filter(!is.na(bin_uri)) %>%
+  
+  # Group the data by latitude
+  group_by(lat) %>%
+  
+  # Summarize the number of unique species and BINs at each latitude
+  summarise(
+    Number_of_species = n_distinct(species_name), 
+    Number_of_BIN = n_distinct(bin_uri)
+  )
+
+# Perform linear regression to assess the relationship between species richness and latitude
+species_lm <- lm(Number_of_species ~ lat, data = df_summary2)
+
+# Get the summary of the linear regression results
+species_summary <- summary(species_lm)
+
+# Display the results of the regression model
+print(species_summary)
+
+## Visualize the relationship between latitude and species richness
+library(ggplot2)
+ggplot(df_summary2, aes(x = lat, y = Number_of_species)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(
+    title = "Number of Species by Latitude",
+    x = "Latitude",
+    y = "Number of Species"
+  )
 
 # Extract F-statistic and p-value for species linear model
 species_f_value <- species_summary$fstatistic[1]
