@@ -258,6 +258,45 @@ df_summary2 <- dfBOLD2%>%
   species_lm <- lm(Number_of_species ~ lat,  data = df_summary2)
   species_summary <- summary(species_lm)
 
+  ##Edit 4: Corrected Linear Regression for Species Analysis------
+
+# Summarize the data by grouping by latitude and calculating unique species and BINs
+df_summary2 <- dfBOLD2 %>%
+  
+  # Remove rows with missing latitude, species name, or BIN URI
+  filter(!is.na(lat)) %>%
+  filter(!is.na(species_name)) %>%
+  filter(!is.na(bin_uri)) %>%
+  
+  # Group the data by latitude
+  group_by(lat) %>%
+  
+  # Summarize the number of unique species and BINs at each latitude
+  summarise(
+    Number_of_species = n_distinct(species_name), 
+    Number_of_BIN = n_distinct(bin_uri)
+  )
+
+# Perform linear regression to assess the relationship between species richness and latitude
+species_lm <- lm(Number_of_species ~ lat, data = df_summary2)
+
+# Get the summary of the linear regression results
+species_summary <- summary(species_lm)
+
+# Display the results of the regression model
+print(species_summary)
+
+## Visualize the relationship between latitude and species richness
+library(ggplot2)
+ggplot(df_summary2, aes(x = lat, y = Number_of_species)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(
+    title = "Number of Species by Latitude",
+    x = "Latitude",
+    y = "Number of Species"
+  )
+
 # Extract F-statistic and p-value for species linear model
 species_f_value <- species_summary$fstatistic[1]
 species_p_value <- species_summary$coefficients[2,  4]
