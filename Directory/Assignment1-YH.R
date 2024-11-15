@@ -249,7 +249,8 @@ df_summary2 <- dfBOLD2%>%
   species_lm <- lm(Number_of_species ~ lat,  data = df_summary2)
   species_summary <- summary(species_lm)
 
-  ##Edit 4: Corrected Linear Regression for Species Analysis------
+  ##Edit 3: Corrected Linear Regression for Species Analysis------
+  # The original code caused an error by attempting linear regression within a pipe sequence. The revised code separates the summarization and regression steps, stores the data in df_summary2, and adds a ggplot2 scatter plot with a regression line.
 
 # Summarize the data by grouping by latitude and calculating unique species and BINs
 df_summary2 <- dfBOLD2 %>%
