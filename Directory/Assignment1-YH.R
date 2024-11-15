@@ -81,6 +81,14 @@ length(unique(dfBOLD2$country))
 #lat = 136
 length(unique(dfBOLD2$lat))
 
+## Edit 2:Redundancy Reduction and Code Efficiency ------
+#Calculate the unique count
+count_unique <- function(df, columns) {
+  sapply(columns, function(col) length(unique(df[[col]])))
+}
+unique_counts <- count_unique(dfBOLD2, c("bin_uri", "species_name", "country", "lat"))
+print(unique_counts)
+
 #Visual normality for "lat" #1
 qqnorm(dfBOLD2$lat)
 qqline(dfBOLD2$lat)
