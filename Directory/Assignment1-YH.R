@@ -33,6 +33,15 @@ library(styler)
 #Set my working directory
 #session/set working directory/choose directory/select and open the directory
 
+## Edit 1: BOLD Data Acquisition and Saving------
+library(bold)
+
+# Fetch specimen data for Chaetognatha from Canada, United States, and India
+df_bold <- bold_specimens(taxon = "Chaetognatha", geo = c("Canada", "United States", "India"))
+
+# Save the data to a TSV file for analysis
+write_tsv(df_bold, "Chaetognatha_BOLD_data.tsv")
+
 #open and read the data file
 dfBOLD <- read_tsv("../data/Chaetognatha_BOLD_data.tsv")
 
