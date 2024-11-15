@@ -79,7 +79,7 @@ count_unique <- function(df, columns) {
 unique_counts <- count_unique(dfBOLD2, c("bin_uri", "species_name", "country", "lat"))
 print(unique_counts)
 
-#Visual normality for "lat" #1
+#Visual normality for "lat" 
 qqnorm(dfBOLD2$lat)
 qqline(dfBOLD2$lat)
 
@@ -103,7 +103,8 @@ lat_summary <- dfBOLD2%>%
     min_latitude = min(lat,  na.rm = TRUE)     # Calculate min latitude
   )
 
-##Edit 3: Adding a Statistical Test and Enhancing Data Summary
+##Edit 2: Adding a Statistical Test and Enhancing Data Summary------
+# The original code called the Shapiro-Wilk test twice, causing redundancy. The revised code stores the result in a variable and defines countries_to_analyze as a separate vector, improving efficiency and reusability.
 shapiro_test_result <- shapiro.test(dfBOLD2$lat)
 print(shapiro_test_result)
 
