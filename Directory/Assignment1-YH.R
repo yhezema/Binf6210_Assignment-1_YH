@@ -16,7 +16,6 @@ theme_set(theme_light())
 
 library(ggthemes)
 
-
 #to create Venn diagram
 #install.packages("VennDiagram") ++ New packages ++ 
 library(VennDiagram)
@@ -71,7 +70,8 @@ length(unique(dfBOLD2$country))
 #lat = 136
 length(unique(dfBOLD2$lat))
 
-## Edit 2:Redundancy Reduction and Code Efficiency ------
+## Edit 1:Redundancy Reduction and Code Efficiency ------
+#The original code manually calculates unique counts for each column using length(unique(...)), which is simple but not scalable. The edited code uses a count_unique function with sapply to calculate unique counts for multiple columns at once, improving efficiency, scalability, and code modularity.
 #Calculate the unique count
 count_unique <- function(df, columns) {
   sapply(columns, function(col) length(unique(df[[col]])))
