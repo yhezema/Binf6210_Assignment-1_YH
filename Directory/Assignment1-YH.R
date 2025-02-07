@@ -150,7 +150,7 @@ dfBOLD2%>%
     cols = c("Number_of_records",  "Number_of_BIN",  "Number_of_species"), 
     names_to = "category", 
     values_to = "count"
-  )%>%
+  )
   
   #Plotting the data
   #remove "-" from "reorder(country,  -count)" in y = reorder(country,  -count) to arrange the countries descending
