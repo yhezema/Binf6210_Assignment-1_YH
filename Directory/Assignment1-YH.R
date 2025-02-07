@@ -243,7 +243,7 @@ df_summary2 <- dfBOLD2%>%
   summarise(
     Number_of_species = n_distinct(species_name), 
     Number_of_BIN = n_distinct(bin_uri)
-  )%>%
+  )
   
   # Linear regression for species
   species_lm <- lm(Number_of_species ~ lat,  data = df_summary2)
